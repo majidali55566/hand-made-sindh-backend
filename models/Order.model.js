@@ -32,13 +32,19 @@ const orderSchema = new Schema(
           type: Number,
           required: true,
         },
+        selectedColor: {
+          type: String,
+        },
+        selectedSize: {
+          type: String,
+        },
       },
     ],
-    shippingAddress: {
-      street: { type: String, required: true },
-      city: { type: String, required: true },
-      state: { type: String, required: true },
-      zipCode: { type: String },
+    shippingDetails: {
+      fullName: { type: String, required: true },
+      address: { type: String, required: true },
+      contactNumber: { type: String, required: true },
+      postalCode: { type: String },
     },
     paymentMethod: {
       type: String,
@@ -64,6 +70,12 @@ const orderSchema = new Schema(
     orderNotes: {
       type: String,
       description: "Optional notes provided by the buyer during checkout.",
+    },
+    estimatedArrivalDate: {
+      type: Date,
+      default: null,
+      description:
+        "Estimated arrival date of the order provided by the seller.",
     },
     createdAt: {
       type: Date,

@@ -26,18 +26,19 @@ exports.addToCart = async (req, res) => {
       cart = new CartModel({ user: userId, items: [] });
     }
 
-    // Find the index of the product in the cart
-    const existingItemIndex = cart.items.findIndex((item) =>
-      item.product.equals(productId)
+    // Find the index of the product in the cart with the same color and size
+    const existingItemIndex = cart.items.findIndex(
+      (item) =>
+        item.product.equals(productId) &&
+        item.selectedColor === selectedColor &&
+        item.selectedSize === selectedSize
     );
 
     let updatedItem;
 
     if (existingItemIndex > -1) {
-      // Update the existing item
+      // Update the existing item with the same product, color, and size
       cart.items[existingItemIndex].quantity += quantity;
-      cart.items[existingItemIndex].selectedColor = selectedColor;
-      cart.items[existingItemIndex].selectedSize = selectedSize;
 
       // Set updatedItem to the modified cart item
       updatedItem = cart.items[existingItemIndex];
@@ -61,8 +62,11 @@ exports.addToCart = async (req, res) => {
     await cart.populate("items.product");
 
     // Find the updated item after population
-    const populatedItem = cart.items.find((item) =>
-      item.product._id.equals(productId)
+    const populatedItem = cart.items.find(
+      (item) =>
+        item.product._id.equals(productId) &&
+        item.selectedColor === selectedColor &&
+        item.selectedSize === selectedSize
     );
 
     // Return the updated or added item with the populated product
@@ -100,22 +104,50 @@ exports.updateQuantity = async (req, res) => {
 };
 
 exports.deleteItemFromCart = async (req, res) => {
-  const { productId } = req.body;
-  console.log(productId);
+  const { productId, selectedColor, selectedSize } = req.body;
   const userId = req.user.id;
 
   try {
-    const deletedItem = await CartModel.findOneAndUpdate(
-      { user: userId },
-      { $pull: { items: { product: productId } } },
-      { new: true }
-    );
-    if (!deletedItem)
+    // Find the cart for the user
+    const cart = await CartModel.findOne({ user: userId });
+
+    if (!cart) {
       return res.status(404).json({
-        message: "Cart or Product not found",
+        message: "Cart not found",
       });
-    res.status(200).json({ message: "Item removed from cart", id: productId });
+    }
+
+    // Find the index of the item to be removed based on productId, selectedColor, and selectedSize
+    const itemIndex = cart.items.findIndex(
+      (item) =>
+        item.product.equals(productId) &&
+        item.selectedColor === selectedColor &&
+        item.selectedSize === selectedSize
+    );
+
+    if (itemIndex > -1) {
+      // Remove the item if it exists
+      cart.items.splice(itemIndex, 1);
+
+      // Save the updated cart
+      await cart.save();
+
+      res.status(200).json({
+        message: "Item removed from cart",
+        productId, // Return the productId for reference
+        selectedColor,
+        selectedSize,
+      });
+    } else {
+      // Item not found in the cart
+      res.status(404).json({
+        message: "Item not found in the cart",
+      });
+    }
   } catch (error) {
-    return res.status(500).json({ message: "Internal Server Error" });
+    console.error("Error deleting item from cart:", error);
+    res.status(500).json({
+      message: "Internal Server Error",
+    });
   }
 };

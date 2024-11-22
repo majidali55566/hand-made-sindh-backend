@@ -146,6 +146,7 @@ exports.getAllProducts = async (req, res) => {
 
 exports.getProductById = async (req, res) => {
   const { id } = req.params;
+  console.log("Get productById", id);
   try {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: "Invalid Product Id" });
@@ -159,5 +160,62 @@ exports.getProductById = async (req, res) => {
     res.status(200).json({ product });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.getPaginatedProducts = async (req, res) => {
+  try {
+    const { page = 1, limit = 5 } = req.query; // Default values for page and limit
+
+    // Convert query params to integers
+    const pageNumber = parseInt(page);
+    const limitNumber = parseInt(limit);
+
+    const products = await Product.find()
+      .skip((pageNumber - 1) * limitNumber) // Skip documents for previous pages
+      .limit(limitNumber); // Limit the number of documents per page
+
+    const totalProducts = await Product.countDocuments(); // Total number of products
+    const totalPages = Math.ceil(totalProducts / limitNumber); // Calculate total pages
+
+    res.status(200).json({
+      products,
+      currentPage: pageNumber,
+      totalPages,
+      totalProducts,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error });
+  }
+};
+
+exports.searchProducts = async (req, res) => {
+  try {
+    const { search = "", page = 1, limit = 10 } = req.query;
+
+    console.log(search, page, limit);
+
+    // Validate page and limit to prevent invalid values
+    const validatedPage = Math.max(1, parseInt(page));
+    const validatedLimit = Math.max(1, parseInt(limit));
+
+    const searchRegex = new RegExp(search, "i");
+
+    const products = await Product.find({ name: searchRegex })
+      .limit(validatedLimit)
+      .skip((validatedPage - 1) * validatedLimit);
+
+    const total = await Product.countDocuments({ name: searchRegex });
+
+    const totalPages = Math.ceil(total / validatedLimit);
+
+    res.status(200).json({
+      products,
+      totalPages,
+      currentPage: validatedPage,
+    });
+  } catch (error) {
+    console.error(error); // Log the error for debugging
+    res.status(500).json({ message: "Server Error" });
   }
 };
