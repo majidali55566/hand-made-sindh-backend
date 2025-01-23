@@ -4,7 +4,7 @@ const cookieParser = require("cookie-parser");
 const corsOptions = require("./config/CorsOptions.js");
 const credentials = require("./middleware/credentials.js");
 const connectToMongo = require("./config/ConnectMongo.js");
-const authRouter = require("./routes/auth");
+const authRouter = require("./routes/auth.js");
 const sellerRouter = require("./routes/sellerRoutes.js");
 const productRouter = require("./routes/productRoutes.js");
 const cartRouter = require("./routes/cartRoutes.js");
@@ -20,6 +20,7 @@ app.use(cookieParser());
 
 connectToMongo();
 
+app.get("/", (req, res) => res.send("Express on Vercel"));
 app.use("/api/auth", authRouter);
 app.use("/api/sellers", sellerRouter);
 app.use("/api/products", productRouter);
