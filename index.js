@@ -27,7 +27,9 @@ app.use("/api/products", productRouter);
 app.use("/api/cart", cartRouter);
 app.use("/api/orders", orderRouter);
 
-const PORT = process.env.PORT || 1337;
-app.listen(PORT, () => {
-  console.log(`Server started on port ${PORT}`);
-});
+// const PORT = process.env.PORT || 1337;
+// app.listen(PORT, () => {
+//   console.log(`Server started on port ${PORT}`);
+// });
+
+module.exports = app;
