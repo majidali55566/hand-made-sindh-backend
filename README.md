@@ -2,7 +2,7 @@ Here’s the updated **README** section with clickable links for the deployed fr
 
 ---
 
-## Backend - Handmade Sindh 🖥️  
+## Backend - Sindh crafts 🖥️  
 
 The backend of the **Handmade Sindh** project is designed to provide a robust, secure, and scalable foundation for the e-commerce platform dedicated to promoting and selling artisan products. Built using the **MERN stack**, the backend handles all server-side operations, ensuring a seamless experience for both buyers and sellers.  
 
