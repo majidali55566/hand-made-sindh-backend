@@ -87,7 +87,6 @@ exports.signUpWithGoogle = async (req, res) => {
   const { googleId, name, email, profilePicture } = req.body;
 
   try {
-    // Check if the user already exists
     let user = await User.findOne({ email });
 
     if (user) {
