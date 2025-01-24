@@ -20,8 +20,8 @@ The backend of the **Handmade Sindh** project is designed to provide a robust, s
 - **Tools:** Postman, Git  
 
 ### Deployed Links 🌐  
-- **Frontend:** [(https://sindh-crafts.netlify.app/)](#)  
-- **Backend:** [(https://hand-made-sindh-backend.vercel.app/)](#)  
+- **Frontend:**https://sindh-crafts.netlify.app/
+- **Backend:**https://hand-made-sindh-backend.vercel.app/
 
 This backend ensures reliability, security, and scalability, empowering the Handmade Sindh platform to connect artisans with customers effectively.  
 
